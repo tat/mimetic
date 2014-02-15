@@ -1,0 +1,69 @@
+QUICKSTART
+-----
+'make examples' will build all examples programs. 
+
+Run each of them with the -h command line parameters to get usage instruction.
+
+exbin 
+-----
+Extracts e-mail attachments contained into input file(s).
+
+You can extract just one type of attachment limiting the extraction to one
+Content-Type using the -t parameter. 
+
+Ex.
+    ./exbin -t sound Mail/*
+    ./exbin -t image/jpeg Mail/*
+
+    This will extract all binaries, lots of virus and worms will be 
+    probably extracted so be careful!
+    ./exbin Mail/*
+
+structure 
+---------
+Prints the MIME structure of email messages
+
+b64 
+---
+Base64 encodes and decodes input files
+
+qp 
+--
+Encodes and decodes in Quoted-Printable input files
+
+catpart 
+-------
+This is a sort of standard Unix 'cat' program applied to email messages.
+
+It searches for MIME entities based on command line parameters and prints
+contents of those that match.
+
+NOTE THAT -r MUST BE USED TO CONSIDER CHILD ENTITIES
+
+Ex.
+    prints the content of parts of MIME type image/* of email stored 
+    in 'test.msg':
+        ./catpart -r -t image test.msg
+
+    prints just the name of files that contain image/* entities
+        ./catpart -r -t image -l *
+
+    prints entities whose Subject contain the word 'virus'
+        ./catpart -r -f subject=virus *
+
+buildidx 
+--------
+Create an index of files or directories containing email messages for fast
+searches using the 'search' program.
+Es.
+    ./buildidx ~/Mail/* > my_mail.index
+
+search 
+------
+Search for messages, try 'search -h' for parameters.
+Use -I to use the index created with 'buildidx' to speed up lookup
+
+mbox
+----
+It prints the MIME structure of each message found in a MBOX archive.
+It's not very useful right now but it will be expanded :)

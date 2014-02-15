@@ -1,0 +1,91 @@
+EXAMPLES
+--------
+b64,qp:
+	use File instead of istream
+convert mailboxes: 
+	to/from: mbox maildir outlook eudora mbx ns/mozilla
+
+extract attachments based on: 
+	mime type, file extension, from, to, header fields values, etc.
+
+exbin:
+	maildir support
+
+mm command line:
+	mm [FUNC] [PARAMS...] [INFILE] [OUTFILE]
+
+	note:
+	- considerare il singolo msg come mailbox con un msg
+	- se -in e -out non ci sono utilizzare stdin, stdout
+
+	MAILBOX FUNCTIONS:
+		mailbox-convert
+		mailbox-split
+			-maxsize 
+			-maxmsgs
+		mailbox-merge
+
+		COMMON PARAMS:
+		-in file,format
+		-out file/dir,format
+	EXAMPLES:
+	mm mailbox-convert -in test.mbox,mbox -out dir/,maildir
+	mm mailbox-convert -in test.mbox,mbox -out boh,outlook
+	mm mailbox-split -in bit.mbox -out base_name,mbox -maxsize 5M
+	mm mailbox-split -in bit.mbox -out base_name,mbox -maxmsgs 100
+	mm mailbox-merge -in inbox/,maildir -in oldmsg.mbox -out all/,maildir
+
+	MAIL FUNCTIONS:
+		match // match entities
+			--has-field name
+			// exact, regex&substring match. if value is not 
+			// specified works like --has-field 
+			--field name  [[=|~] value] 
+			--ifield name [ [=|~] value] // case insensitive match
+			--[from|to|subject|cc|bcc|content-type|etc.] [=~] value
+			--msgsize [-+]num[b|k|M] // size ==,<,>,bytes,kilo,mega
+			--partsize [-+]num[b|k|M] // size ==,<,>,bytes,kilo,mega
+			--attach-filename [=~] *.EXE
+			--iname *.jpg
+			--has-binary-attach
+			--top-level // match the whole message
+		actions
+			--add-header name
+			--del-header name
+			--mod-header name s/old/new/
+
+			--attach file.bin 
+			--detach // selected entity
+		options:
+			--encoding base64|qp
+			--in [file|-]
+			--out [file|-]
+
+	mm -in - --has-field X-Spam --action detach --binary 
+	mm -in in.msg -out out.msg --top-level --attach file.bin --encoding qp
+	mm --content-type application/zip --detach
+	mm --has-binary-attach --detach
+	mm --field Content-Type --param name ~ '.*gz'
+
+multi-function mail prog:
+	more mailbox formats
+	generate digests from msg lists
+	file extension filter
+	index/search ?
+	filter on attachment size
+	filter based on result of external program (ie antivirus)
+	Insert disclaimers 
+	regular expression filter
+
+	add/del/modify header field:
+	add/del attachment: (spam/virus killer)
+	create mbox from a list of file msg
+	extract file msgs from a mbox archive
+	merge two or more mailboxes
+	split a mailbox based on filter (to archive or delete)
+	partition mbxes (create 5 mbx of max 10MBytes from this_big.mbx)
+	convert mailbox type
+	search && buildidx
+	applica Filtri: per es. filtra mbx e scrivi l'out sul file XX
+	esegui app se matcha il filtro X
+	mark msg un/read

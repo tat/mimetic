@@ -1,0 +1,101 @@
+$Id: ChangeLog,v 1.31 2009-02-27 16:00:43 tat Exp $
+
+10.09.2011, 0.9.7
+    - references to GPL removed (mimetic's MIT licensed now)
+    - body::code() bug fix (thanks to bstoeger)
+    - Win32 port updated (thanks to Hilmi Jauffer)
+    - ContentTransferEncoding encoding consts (base64,eightbit,binary, etc.)
+    - Body::load() now clears the current body content before loading 
+
+13.05.2009, 0.9.6
+    - malformed msg parsing: handle field names with trailing blanks
+    - malformed msg parsing: skip header lines that start with ':'
+    - malformed msg parsing: try to handle messages without the blank line 
+      between the header and body considering the first malformed header line 
+      as the first line of the body
+	- ifile_iterator::operator==() bug fix (thanks to Matthew L. Creech)
+	- <cstdlib> added to libconfig.h (gcc 4.3.2 fix, thanks to Dirk Vermeir) 
+    - bug fix: quoted string are not folded anymore 
+    - bug fix: empty field values parsing fix (thanks to Paul Barnetta)
+    - bug fix: fields with trailing blanks were badly folded (thanks 
+      to Ofer Peled)
+	- LICENSE changed to The MIT / X Window System License
+
+07.10.2008, 0.9.5
+	- folding bug fixed (thanks to by M.Pinna)
+	- tokenizer bug fix (thanks to by Jay Sprenkle)
+
+03.04.2007, 0.9.3
+	- gcc 4.3.x fix
+
+21.01.2007, 0.9.2
+	- Solaris compatibility fixes (thanks to Shan Will)
+	- itparser.h fixes (thanks to Phil Endecott and Joshua Chang)
+	- DateTime set fix
+
+10.04.2006, 0.9.1
+	- utils.h: gcc 4.1 compatibility fix
+	- assert() on malformed quoted-printable messages removed
+
+12.03.2006, 0.9.0
+	- Body::load optimization (thanks to Jorge Ortiz Claver)
+	- InIt copy_until_boundary fix (thanks to Harald Gering)
+	- fixes to let it build on Solaris (thanks to Shan Will)
+
+07.03.2005, 0.8.9
+	- thread-safe MessageId
+	- always use CRLF (instead of '\n') on write functions
+	- gcc 3.4.x support
+	- fix: endless loop on malformed base64 input (thanks to Soenke Schau [ss])
+	- fix: no more characters are eaten by folding algorithm when a word is 
+		   longer then the chosen folding limit
+	- fixed a bug that segfault apps parsing some 'binary' encoded entities
+	  (thanks to Paul Marcovici)
+	- examples/exbin, correctly extract 'binary' encoded entities
+
+06.09.2004, 0.8.8
+    - Codec const-ness mimetic::Body fix
+    - itparser memory leak fixed
+
+30.08.2004, 0.8.7
+    - Mac OS X support
+    - initial Win32 support (thanks to Andreas Gruen [agr]) 
+    - copyright date updated
+    - config_win32.h autogen on 'make dist'
+    - removed a linux specific header file
+    - inline changed to be the first keyword in funcs declaration 
+	  (thanks to Harald Gering)
+    - *.cc renamed to *.cxx (required by MS Visual C++)
+    - IteratorParser<>::append() fix [agr]
+    - Mailbox::str() fix [agr]
+    - tokenizer fix [agr]
+
+29.04.2004, 0.8.6
+    - cutee resync
+    - Body::set(...) added
+    - doc/header.html and doc/footer.html added to distribution pkg
+    - dist-hook to rm test/*.cutee.* test/autocutee.mk
+
+20.01.2004, 0.8.5
+    - parser bug: \n after the body of multipart msgs (see t.parser.h::t0)
+    - cutee resync
+
+17.12.2003, 0.8.4
+    - cutee (unit testing engine) upgraded
+    - a multi-function email tool has been added into the examples
+      directory. it's still work in progess but already useful for 
+      filtering/searching
+    - Attachment and subclasses modified for easy porting
+    - fix to avoid an error when parsing fields without any
+      value: "fieldname: \n". (segfaults if such field is the first one)
+    - find_bm fixed
+
+20.11.2003, 0.8.3
+    - random_access_iterator parser fixed: 
+      sometimes boundary was included into the body
+    - input_iterator parser fixed (will no more ignore the 
+      first body newline)
+    - MMFile::open() will return true only opening regular files
+
+18.11.2003, 0.8.2
+    - initial public release

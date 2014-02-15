@@ -1,0 +1,8 @@
+For updates and documentation:
+    http://mime.codesink.org/
+
+For API docs (doxygen is required):
+    cd doc
+    make docs
+
+Stefano Barbato, stefano@codesink.org

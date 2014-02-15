@@ -1,0 +1,197 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_REVISION($Revision: 1.38 $)
+AC_INIT(mimetic/mimetic.h)
+AC_CANONICAL_SYSTEM
+AC_CONFIG_MACRO_DIR([m4])
+
+AM_INIT_AUTOMAKE(mimetic,0.9.7)
+AM_CONFIG_HEADER(mimetic/config.h)
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_MAKE_SET
+AC_PROG_LIBTOOL
+
+dnl defines HAVE_MMAP if mmapping works
+AC_FUNC_MMAP
+AC_CHECK_FUNCS(madvise)
+
+AC_PROG_CXX
+AC_PROG_CXXCPP
+
+AC_PROG_INSTALL
+
+AC_LANG_CPLUSPLUS
+
+INCLUDEDIR=$includedir/mimetic
+
+debug_enabled=false
+
+dnl CFLAGS and CXXFLAGS default to -O2 -g
+
+dnl CXXFLAGS="$CXXFLAGS -DNDEBUG -fno-exceptions"
+CXXFLAGS="$CXXFLAGS -DNDEBUG"
+
+AC_ARG_ENABLE(debug,
+  [  --enable-debug[=LEVEL]  enables debug symbols [default=2]],
+  if test "$enableval" = "yes"; then
+    debug_enabled=true
+    CXXFLAGS="-g -Wall"
+  else
+    if test "$enableval" != "no"; then
+      debug_enabled=true
+      CXXFLAGS="-g$enableval -Wall"
+    fi
+  fi
+  )
+
+AC_ARG_ENABLE(profile,
+  [  --enable-profile        enables profiling],
+  if test "$enableval" = "yes"; then
+    CXXFLAGS="$CXXFLAGS -pg -a"
+  fi
+  )
+
+dnl *** Checks for libraries.
+
+AC_ARG_WITH(stlport,
+  [  --with-stlport[=BASEDIR]       use STLport],
+  enable_stlport="yes"
+  dnl STLport base dir
+  if test "$withval" != "no"; then
+      if test $withval != "yes"; then
+
+          with_stlport_basedir=$withval
+      with_stlport_includes=${withval}/include/stlport
+          with_stlport_libraries=${withval}/lib
+      fi
+  fi
+  , enable_stlport=no)
+
+AC_ARG_WITH(stlport-includes, 
+  [  --with-stlport-includes=DIR    where the STLport includes are ],
+  [with_stlport_includes=$withval])
+
+AC_ARG_WITH(stlport-libraries, 
+  [  --with-stlport-libraries=DIR   where STLport library is installed],
+  [with_stlport_libraries=$withval])
+
+AC_ARG_WITH(stlport-libname, 
+  [  --with-stlport-libname=NAME    STLport lib base name],
+  [with_stlport_libname=$withval])
+
+dnl AC_ARG_WITH(stlport-debug, 
+dnl  [  --with-stlport-debug    STLport debug mode on/off.[default: on with --enable-debug off otherwise],
+dnl  [  with_stlport_libname=${with_stlport_libname}_stldebug  ])
+
+if test "$enable_stlport" = "yes"; then
+  dnl ** debug enabled ?
+  if test "$debug_enabled" = "true"; then
+    CXXFLAGS="$CXXFLAGS -D_STLP_DEBUG"
+  fi
+  dnl *** STLport include dir
+  if test "$with_stlport_includes"; then
+    AC_CHECK_HEADER(${with_stlport_includes}/stl_user_config.h,
+                     stlp_headers_found=true)
+  else
+    stlp_include_dirs="/usr/local/include/stlport /usr/include/stlport"
+    for stlp_inc in $stlp_include_dirs; do
+      AC_CHECK_HEADER(${stlp_inc}/stl_user_config.h,
+                      with_stlport_includes=$stlp_inc
+              export stlp_headers_found=true
+              break) 
+    done
+  fi
+
+  if test "$stlp_headers_found" != "true"; then
+    AC_MSG_ERROR([I'm unable to find STLport include directory])
+  fi
+  
+  if test "$with_stlport_libraries"; then
+    stlp_ldflags="$stlp_ldflags -L${with_stlport_libraries}"
+  fi
+  
+  dnl *** STLport library(it must be linked with libm & libpthread on linux...
+  AC_CHECK_LIB(m, main,stlp_ldflags="$stlp_ldflags -lm")
+  case "$host_os" in
+    freebsd*) 
+        stlp_ldflags="$stlp_ldflags -pthread";;
+    *netbsd*) 
+    stlp_ldflags="$stlp_ldflags -L/usr/libexec -lm"
+    ;;
+    *) stlp_ldflags="$stlp_ldflags -lpthread"
+       AC_CHECK_LIB(pthread, main,stlp_ldflags="$stlp_ldflags -lpthread")
+    ;;
+  esac
+  
+  if test "$with_stlport_libname"; then
+    AC_CHECK_LIB($with_stlport_libname,main,stlp_lib_found=true,,
+                 [$stlp_ldflags])
+  else
+    dnl *** try to get stlport library name 
+    stlp_libs="stlport_gcc stlport_icl stlport_cygwin stlport_dec \
+       stlport_djgpp stlport_mingw32 stlport_aCC stlport_kcc stlport_misppro \
+       stlport_sunpro stlport_vc5 stlport_vc6 stlport_vc7 stlport_watcom"
+    for stlp_libname in $stlp_libs; do 
+      test "$debug_enabled" = "true" && stlp_libname=${stlp_libname}_debug
+      AC_CHECK_LIB($stlp_libname, main,
+        with_stlport_libname=$stlp_libname
+    stlp_lib_found=true
+    break,
+      ,[$stlp_ldflags])
+    done
+  fi
+
+  if test "$stlp_lib_found" != "true"; then
+      AC_MSG_ERROR([I'm unable to find STLport library. You must call configure
+                    with the --with-stlport-libname option])
+  fi
+  stlp_ldflags="$stlp_ldflags -l$with_stlport_libname"
+  CXXFLAGS="$CXXFLAGS -I$with_stlport_includes"
+  LDFLAGS="$LDFLAGS ${stlp_ldflags}"
+fi
+
+CXXFLAGS="$CXXFLAGS -DHAVE_MIMETIC_CONFIG"
+CFLAGS="$CXXFLAGS"
+
+dnl ** check for STL required features
+ AC_MSG_CHECKING([STL required features])
+ AC_TRY_COMPILE([#include <string>],
+      [using namespace std; char_traits<char>::eq('a','a');],
+      ,
+      AC_MSG_ERROR([std::char_traits unsupported])
+      )
+AC_TRY_COMPILE([#include <streambuf>],
+      [using namespace std; struct sbd:public streambuf {} msb;],
+      ,
+      AC_MSG_ERROR([std::streambuf unsupported])
+      )
+AC_MSG_RESULT([yes])
+
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_TYPE_SIZE_T
+AC_TYPE_OFF_T
+AC_TYPE_UID_T
+
+AC_HEADER_DIRENT
+AC_CHECK_HEADERS(sys/stat.h)
+AC_CHECK_HEADERS(sys/types.h)
+AC_CHECK_HEADERS(sys/time.h)
+AC_CHECK_HEADERS(stdint.h)
+
+AC_SUBST(PACKAGE)
+AC_SUBST(VERSION)
+AC_SUBST(INCLUDEDIR)
+
+AC_OUTPUT(Makefile          \
+    mimetic/Makefile        \
+    mimetic/codec/Makefile  \
+    mimetic/rfc822/Makefile \
+    mimetic/os/Makefile     \
+    mimetic/parser/Makefile \
+    test/Makefile           \
+    examples/Makefile       \
+    doc/Makefile            \
+    doc/doxygen.config      \
+    win32/Makefile)
