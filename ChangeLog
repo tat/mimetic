@@ -1,4 +1,6 @@
-$Id: ChangeLog,v 1.31 2009-02-27 16:00:43 tat Exp $
+
+17.06.2014, 0.9.8
+	- clang/gcc compilation fixes in tokenizer.h
 
 10.09.2011, 0.9.7
     - references to GPL removed (mimetic's MIT licensed now)

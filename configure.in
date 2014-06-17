@@ -4,7 +4,7 @@ AC_INIT(mimetic/mimetic.h)
 AC_CANONICAL_SYSTEM
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE(mimetic,0.9.7)
+AM_INIT_AUTOMAKE(mimetic,0.9.8)
 AM_CONFIG_HEADER(mimetic/config.h)
 
 dnl Checks for programs.
