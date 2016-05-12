@@ -69,7 +69,7 @@ ostream& MimeEntity::write(ostream& os, const char* eol) const
         os << crlf << boundary + "--" << crlf;
         if(body().epilogue().length())
             os << body().epilogue();
-    } else if(ct.type() == "message" && ct.subtype() == "rfc822") {
+    } else if(ct.type() == "message" && ct.subtype() == "rfc822" && !body().parts().empty()) {
         MimeEntityList::const_iterator bit, eit;
         bit = body().parts().begin(), eit = body().parts().end();
         for(; bit != eit; ++bit)
