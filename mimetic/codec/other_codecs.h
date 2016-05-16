@@ -89,8 +89,9 @@ struct Lf2CrLf: public unbuffered_codec, public chainable_codec<Lf2CrLf>
         {
             *out = CR; ++out;
             *out = LF; ++out; 
-        } else
+        } else {
             *out = c; ++out;
+        }
     }
     const char* name() const
     {    
