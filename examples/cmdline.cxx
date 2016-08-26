@@ -1,5 +1,6 @@
 #include <getopt.h>
 #include <iostream>
+#include <cstring>
 #include "mm.h"
 #include "cmdline.h"
 
