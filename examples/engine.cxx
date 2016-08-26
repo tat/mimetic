@@ -375,7 +375,7 @@ MimeEntity* engine::match(MimeEntity& me, int level, parts_hierarchy* ph)
             ph->erase(ph->begin());
         }
     }
-    static char *std_fields[] = {
+    static const char *std_fields[] = {
         "from", "sender", "to", "sujbect", "cc", "bcc",
         "user-agent", "date", "content-type", 
         "content-transfer-encoding", "content-disposition",
@@ -418,7 +418,7 @@ MimeEntity* engine::match(MimeEntity& me, int level, parts_hierarchy* ph)
             }
         } else {
             int break_loop = 0;
-            char **std_name = std_fields;
+            const char **std_name = std_fields;
             for( int i = 0 ; std_name[i] ; ++i) 
             {
                 if(name == std_name[i])
