@@ -40,7 +40,7 @@ std::string Mailbox::str() const
     {
         rs = m_label + " <";
         if(hasRoute)
-            rs = m_route+ ":";
+            rs += m_route+ ":";
     }
 
     rs += m_mailbox + "@" + m_domain;
