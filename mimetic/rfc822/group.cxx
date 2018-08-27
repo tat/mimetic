@@ -96,7 +96,8 @@ void Group::set(const string& text)
         } 
     }
     // trailing ';' missing
-    push_back(Mailbox(string(start, p-1)));
+    if(start <= (p-1))
+        push_back(Mailbox(string(start, p-1)));
 }
 
 string Group::name(int bCanonical) const

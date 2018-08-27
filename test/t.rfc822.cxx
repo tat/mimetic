@@ -154,6 +154,9 @@ void testRfc822::testAddress()
     b.set("group label: ;");
     TEST_ASSERT(b.isGroup());
 
+    b.set("undisclosed-recipient:");
+    TEST_ASSERT(b.isGroup());
+
 }
 
 
