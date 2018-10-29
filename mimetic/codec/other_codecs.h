@@ -81,21 +81,28 @@ struct ToLowerCase: public unbuffered_codec, public chainable_codec<ToLowerCase>
  */
 struct Lf2CrLf: public unbuffered_codec, public chainable_codec<Lf2CrLf>
 {
+    Lf2CrLf()
+    : m_prev('\0')
+    {
+    }
     template<typename OutIt>
     void process(char c, OutIt& out)
     {
         enum { LF = 0xA, CR = 0xD };
-        if(c == LF)
+        if(c == LF && m_prev != CR)
         {
             *out = CR; ++out;
             *out = LF; ++out; 
         } else
             *out = c; ++out;
+        m_prev = c;
     }
     const char* name() const
     {    
         return "Lf2CrLf"; 
     }
+private:
+    char m_prev;
 };
 
 /// Inserts a new line if the input line is too long
