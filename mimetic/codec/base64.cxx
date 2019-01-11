@@ -13,7 +13,7 @@ const char Base64::sEncTable[] =
     "abcdefghijklmnopqrstuvwxyz"
     "0123456789+/=";
 
-const char Base64::sDecTable[] = {
+const signed char Base64::sDecTable[] = {
         -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
         -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
         -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
