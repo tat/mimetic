@@ -57,7 +57,7 @@ bool MMFile::open(int mode)
 bool MMFile::map()
 {
     m_beg = (char*) mmap(0, m_st.st_size, PROT_READ, MAP_SHARED,m_fd,0);
-    if(m_beg > 0)
+    if(m_beg != MAP_FAILED)
     {
         m_end = m_beg + m_st.st_size;
         #if HAVE_MADVISE
