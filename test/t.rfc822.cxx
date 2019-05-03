@@ -84,6 +84,7 @@ void testRfc822::testMailbox()
         { "<e(boom). (boo)d@mail.com>", "e.d", "mail.com", "", "" },
         { "Bella Ragga <e(boom). (boo)d@mail.com>", "e.d", 
           "mail.com", "Bella Ragga", "" },
+        { "<e@mail.com> ", "e", "mail.com", "", "" },
         { 0,0,0,0,0 }
         };
     // test parser
