@@ -61,7 +61,7 @@ void Mailbox::set(const string& input)
     // the string::erase or/and we cannot cache begin() end()
 
     int t = input.length() -1;
-    while(input[t] == ' ')
+    while(t && input[t] == ' ')
         t--;
     if(t > 0 && input[t] == '>')
     {
