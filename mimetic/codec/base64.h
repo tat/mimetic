@@ -20,7 +20,7 @@ class Base64
     enum { default_maxlen = 76 };
     enum { eq_sign = 100 };
     static const char sEncTable[];
-    static const char sDecTable[];
+    static const signed char sDecTable[];
     static const int sDecTableSz;
 public:
     class Encoder; class Decoder;
