@@ -55,6 +55,9 @@ public:
      */
     MimeEntity(std::istream&);
 
+    MimeEntity(const MimeEntity&) = delete;
+    MimeEntity& operator=(const MimeEntity&) = delete;
+
     virtual ~MimeEntity();
 
     /**
