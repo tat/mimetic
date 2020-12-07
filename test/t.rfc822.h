@@ -10,6 +10,7 @@ namespace mimetic
 struct TEST_CLASS( testRfc822 )
 {
     void TEST_FUNCTION( testAddress );
+    void TEST_FUNCTION( testAddressList );
     void TEST_FUNCTION( testMailbox );
     void TEST_FUNCTION( testGroup );
 };

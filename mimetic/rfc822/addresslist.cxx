@@ -57,6 +57,8 @@ void AddressList::set(const string& text)
             blanks = 0;
         } else if(*p == ' ') {
             blanks++;
+        } else if(p != text.end()-1 && *p == '\\' && *(p+1) == '"') {
+            p++;
         }
     }
     if( (p-beg) != blanks)// not a only-blanks-string

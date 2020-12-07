@@ -160,5 +160,23 @@ void testRfc822::testAddress()
 
 }
 
+void testRfc822::testAddressList()
+{
+    const char* str1 = "\"rcpt1\" <rcpt1@mail.com>";
+    const char* str2 = "\"\\\"rcpt2, abc\\\"\" <rcpt2@mail.com>";
+    const char* str3 = "rcpt3 <rcpt3@mail.com>";
+    const char* delimiter = ",";
+
+    AddressList aList(string(str1) + delimiter + str2 + delimiter + str3);
+/*
+    AddressList::const_iterator bit(aList.begin()), eit(aList.end());
+    for(; bit != eit; ++bit)
+    {
+        cout <<  *bit << endl;
+    }
+*/
+    TEST_ASSERT_EQUALS_P(aList.size(), 3);
+}
+
 
 }
