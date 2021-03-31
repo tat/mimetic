@@ -14,7 +14,7 @@
 using namespace std;
 using namespace mimetic;
 
-void printMimeStructure(MimeEntity* pMe, int tabcount = 0);
+void printMimeStructure(const std::shared_ptr<MimeEntity>& pMe, int tabcount = 0);
 
 int g_verbose; // verbose mode on/off
 int g_quiet; // quiet mode
@@ -31,7 +31,7 @@ int bca_pkcs7_verify(PKCS7 *p7)
     return ~0;
 }
 
-int pkcs7MimeHandle(MimeEntity* pMe, int tabcount)
+int pkcs7MimeHandle(const std::shared_ptr<MimeEntity>& pMe, int tabcount)
 {
     BIO *in = NULL, *content = NULL;
     PKCS7 *p7 = NULL;
@@ -77,8 +77,8 @@ int pkcs7MimeHandle(MimeEntity* pMe, int tabcount)
     sz = BIO_get_mem_data(content, &pdata);
     if(sz > 0 && pdata)
     {
-        MimeEntity me(pdata, pdata + sz, iMask);
-        printMimeStructure(&me, 1 + tabcount);
+        std::shared_ptr<MimeEntity> me = MimeEntity::create(pdata, pdata + sz, iMask);
+        printMimeStructure(me, 1 + tabcount);
     }
 
     /* success */
@@ -96,7 +96,7 @@ err:
 }
 
 
-void printMimeStructure(MimeEntity* pMe, int tabcount)
+void printMimeStructure(const std::shared_ptr<MimeEntity>& pMe, int tabcount)
 {
     Header& h = pMe->header();
     ContentType ct = h.contentType();
@@ -177,8 +177,8 @@ int main(int argc, char** argv)
     if(argc == fidx)
     {
         istreambuf_iterator<char> bit(std::cin), eit;
-        MimeEntity me(bit,eit, iMask);
-        printMimeStructure(&me);
+        std::shared_ptr<MimeEntity> me = MimeEntity::create(bit,eit, iMask);
+        printMimeStructure(me);
     } else {
         for(int fc = fidx; fc < argc; ++fc)
         {
@@ -190,8 +190,8 @@ int main(int argc, char** argv)
                     << endl;
                 continue;
             }
-            MimeEntity me(in.begin(), in.end(),iMask);
-            printMimeStructure(&me);
+            std::shared_ptr<MimeEntity> me = MimeEntity::create(in.begin(), in.end(),iMask);
+            printMimeStructure(me);
         }
     }
     return g_entityCount;

@@ -92,9 +92,9 @@ int engine::regex_match(const string& text, const string& pattern, int match_mod
         return engine::posix_regex_match(text, pattern, match_mode);
 }
 
-void engine::action_attach(MimeEntity& me, parts_hierarchy* ph, const string& fqn)
+void engine::action_attach(const std::shared_ptr<MimeEntity>& me, parts_hierarchy* ph, const string& fqn)
 {
-    bool isMultipart = me.header().contentType().isMultipart();
+    bool isMultipart = me->header().contentType().isMultipart();
     bool isTopLevel = !ph->size();
 
     /*
@@ -106,30 +106,29 @@ void engine::action_attach(MimeEntity& me, parts_hierarchy* ph, const string& fq
         3) me is not multipart and is the top level entity
             same as 2) but move all me fields to the new top-level
     */
-    Attachment* pA = new Attachment(fqn);
+    std::shared_ptr<Attachment> pA = Attachment::create(fqn);
     if(!pA->isValid())
         die("attach error");
     if(isMultipart)
     {
         DBG( "isMultipart");
-        me.body().parts().push_back(pA);
+        me->body().parts().push_back(pA);
     } else {
-        MimeEntity *mm;
-        mm = new MultipartMixed;
-        mm->body().parts().push_back(&me);
+        std::shared_ptr<MimeEntity> mm = MultipartMixed::create();
+        mm->body().parts().push_back(me);
         mm->body().parts().push_back(pA);
         if(!isTopLevel)
         {
             DBG( "!isTopLevel");
-            MimeEntity *parent = *ph->begin();
+            std::shared_ptr<MimeEntity> parent = *ph->begin();
             replace(parent->body().parts().begin(), 
                 parent->body().parts().end(), 
-                &me, mm);
+                me, mm);
         } else {
             DBG( "isTopLevel");
             // add cp fields here
             Header::iterator bit, eit, pos;
-            bit = me.header().begin(), me.header().end();
+            bit = me->header().begin(), me->header().end();
             string name; // field name
             pos = mm->header().begin(); // insert before others
             for(; bit != eit; ++bit)
@@ -145,9 +144,9 @@ void engine::action_attach(MimeEntity& me, parts_hierarchy* ph, const string& fq
     }
 }
 
-void engine::action(MimeEntity& me, parts_hierarchy* ph)
+void engine::action(const std::shared_ptr<MimeEntity>& me, parts_hierarchy* ph)
 {
-    MimeEntity* parent = (ph->size() ? *ph->begin() : &me);
+    std::shared_ptr<MimeEntity> parent = (ph->size() ? *ph->begin() : me);
     if(m_cl.is_set(p_add_header)) 
     {
         static const char* key = "add-header";
@@ -166,7 +165,7 @@ void engine::action(MimeEntity& me, parts_hierarchy* ph)
         for(; bit != eit; ++bit)
         {
             Field f(bit->second);
-            me.header().push_back(f);
+            me->header().push_back(f);
         }
     } 
     if(m_cl.is_set(p_attach)) 
@@ -181,7 +180,7 @@ void engine::action(MimeEntity& me, parts_hierarchy* ph)
     if(m_cl.is_set(p_print_msg))
         cout << *parent;
     else if(m_cl.is_set(p_print_part))
-        cout << me;
+        cout << *me;
 }
 
 
@@ -201,7 +200,7 @@ int engine::exact_match(const string& text, const string& pattern, int match_mod
  * pat1 is the pattern that represents the field name
  * pat2 is the pattern that represents the field value
  */
-int engine::pattern_field_match(const MimeEntity& me, const string& expr, 
+int engine::pattern_field_match(const std::shared_ptr<MimeEntity>& me, const string& expr,
     int match_mode)
 {
     int has_value = 0; // left part of the expr
@@ -225,7 +224,7 @@ int engine::pattern_field_match(const MimeEntity& me, const string& expr,
     field_pat = remove_external_blanks(field_pat);
     value_pat = remove_external_blanks(value_pat);
     // first try to find a field that match the field_pat pattern
-    const Header& h = me.header();
+    const Header& h = me->header();
     Header::const_iterator bit = h.begin(), eit = h.end();
     for( ; bit != eit; ++bit)
     {
@@ -255,19 +254,19 @@ string engine::remove_external_blanks(const string& str) const
     return s;
 }
 
-int engine::fixed_field_match(const MimeEntity& me, const string& name, const string& value, int match_mode)
+int engine::fixed_field_match(const std::shared_ptr<MimeEntity>& me, const string& name, const string& value, int match_mode)
 {
-    if(!me.header().hasField(name))
+    if(!me->header().hasField(name))
         return 0;
     if(value.length() == 0) 
         return 1;  // it exists
-    const string& field_value = me.header().field(name).value();
+    const string& field_value = me->header().field(name).value();
     return pattern_match(field_value, value, match_mode) ;
 }
 
-int engine::has_binary_attach(const MimeEntity& me, const command_line_switch& cls)
+int engine::has_binary_attach(const std::shared_ptr<MimeEntity>& me, const command_line_switch& cls)
 {
-    const Header& h = me.header();
+    const Header& h = me->header();
     const ContentType& ct = h.contentType();
     if(ct.type() == "text" || ct.type() == "multipart" || ct.type() == "message")
         return 0;
@@ -277,7 +276,7 @@ int engine::has_binary_attach(const MimeEntity& me, const command_line_switch& c
     return 1;
 }
 
-int engine::field_match(const MimeEntity& me, const command_line_switch& cls)
+int engine::field_match(const std::shared_ptr<MimeEntity>& me, const command_line_switch& cls)
 {
     const string& name = cls.first, value = cls.second;
     if(name == "field")
@@ -290,9 +289,9 @@ int engine::field_match(const MimeEntity& me, const command_line_switch& cls)
             m_match_mode);
 }
 
-int engine::has_field(const MimeEntity& me, const command_line_switch& cls)
+int engine::has_field(const std::shared_ptr<MimeEntity>& me, const command_line_switch& cls)
 {
-    return me.header().hasField(cls.second);
+    return me->header().hasField(cls.second);
 }
 
 int engine::match_filename(const string& filename, const string& pattern)
@@ -331,10 +330,10 @@ int engine::match_filename(const string& filename, const string& pattern)
     return regex_match(filename, re_pattern, 0);
 }
 
-int engine::attach_filename(const MimeEntity& me,const command_line_switch& cls)
+int engine::attach_filename(const std::shared_ptr<MimeEntity>& me,const command_line_switch& cls)
 {
     typedef list<string> filename_list;
-    const Header& h = me.header();
+    const Header& h = me->header();
     const ContentType& ct = h.contentType();
     const ContentDisposition& cd = h.contentDisposition();
     string pattern = cls.second;
@@ -352,7 +351,7 @@ int engine::attach_filename(const MimeEntity& me,const command_line_switch& cls)
     return 0;
 }
 
-MimeEntity* engine::match(MimeEntity& me, int level, parts_hierarchy* ph)
+std::shared_ptr<MimeEntity> engine::match(const std::shared_ptr<MimeEntity>& me, int level, parts_hierarchy* ph)
 {
     int matched = 1, child_match = 0, free = 0;
 
@@ -363,15 +362,15 @@ MimeEntity* engine::match(MimeEntity& me, int level, parts_hierarchy* ph)
     }
     if(m_cl.is_set(p_recursive))
     {
-        MimeEntityList& parts = me.body().parts();
+        MimeEntityList& parts = me->body().parts();
         if( parts.size() )
         {
             ++level;
             MimeEntityList::iterator mbit, meit;
             mbit = parts.begin(), meit = parts.end();
-            ph->insert(ph->begin(), &me);
+            ph->insert(ph->begin(), me);
             for( ; mbit != meit; ++mbit)
-                child_match += (match(**mbit, level, ph ) ? 1 : 0);
+                child_match += (match(*mbit, level, ph ) ? 1 : 0);
             ph->erase(ph->begin());
         }
     }
@@ -437,5 +436,5 @@ MimeEntity* engine::match(MimeEntity& me, int level, parts_hierarchy* ph)
         action(me, ph);
     if(free)
         delete ph;
-    return ( matched || child_match ? &me : 0);
+    return ( matched || child_match ? me : 0);
 }

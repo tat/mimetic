@@ -151,8 +151,8 @@ void searchIndex(const MimeEntity& me, const MatchParamRq& mpr)
     mbit = me.body().parts().begin(), meit = me.body().parts().end();
     for(; mbit != meit; ++mbit)
     {
-        MimeEntity* pMe = *mbit;
-        if(mpr(pMe))
+        std::shared_ptr<MimeEntity> pMe = *mbit;
+        if(mpr(pMe.get()))
             cout << pMe->header().field("x-filename").value() << endl;
     }
 }
@@ -214,16 +214,14 @@ int main(int argc, char** argv)
         File in(indexFqn);
         die(!in, "Error opening index file");
         mpr.recursive = 0;
-        MimeEntity idxEntity;
-        idxEntity.load(in.begin(), in.end());
-        searchIndex(idxEntity, mpr);
+        std::shared_ptr<MimeEntity> idxEntity = MimeEntity::create(in.begin(), in.end());
+        searchIndex(*idxEntity, mpr);
     } else if(argc == p) { 
         // read from stdin
         istreambuf_iterator<char> bit(cin), eit;
-        MimeEntity me;
-        me.load(bit, eit, ignoreMask);
-        fqn = "stdin";    
-        printPart(me, mpr, fqn);
+        std::shared_ptr<MimeEntity> me = MimeEntity::create(bit, eit, ignoreMask);
+        fqn = "stdin";
+        printPart(*me, mpr, fqn);
     } else 
         for(int fc = p; fc < argc; ++fc)
         {
@@ -235,9 +233,8 @@ int main(int argc, char** argv)
                      << endl;
                 continue;
             }
-            MimeEntity me;
-            me.load(in.begin(), in.end(), ignoreMask);
-            printPart(me,mpr, fqn);
+            std::shared_ptr<MimeEntity> me = MimeEntity::create(in.begin(), in.end(), ignoreMask);
+            printPart(*me, mpr, fqn);
         }
     return g_matches;
 }

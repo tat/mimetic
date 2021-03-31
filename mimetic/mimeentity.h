@@ -12,6 +12,7 @@
 #include <fstream>
 #include <iterator>
 #include <algorithm>
+#include <memory>
 #include <mimetic/strutils.h>
 #include <mimetic/utils.h>
 #include <mimetic/contenttype.h>
@@ -34,7 +35,7 @@ class MimeEntity;
 
 
 /// Represent a MIME entity    
-class MimeEntity
+class MimeEntity : public std::enable_shared_from_this<MimeEntity>
 {
     friend class Body;
     friend class MimeEntityLoader;
@@ -44,16 +45,16 @@ public:
     /**
      *  Blank MIME entity
      */
-    MimeEntity();
+    static std::shared_ptr<MimeEntity> create();
     /**
      *  Parse [beg, end] and build entity based on content
      */
     template<typename Iterator>
-    MimeEntity(Iterator beg, Iterator end, int mask = imNone);
+    static std::shared_ptr<MimeEntity> create(Iterator beg, Iterator end, int mask = imNone);
     /**
      *  Parse istream and build entity based on content
      */
-    MimeEntity(std::istream&);
+    static std::shared_ptr<MimeEntity> create(std::istream&);
 
     virtual ~MimeEntity();
 
@@ -91,10 +92,18 @@ public:
      */
     size_type size() const;
     friend std::ostream& operator<<(std::ostream&, const MimeEntity&);
+
 protected:
+    MimeEntity();
     void commonInit();
 
     virtual std::ostream& write(std::ostream&, const char* eol = 0) const;
+
+    template<class Type>
+    static std::shared_ptr<Type> init(const std::shared_ptr<Type>& mimeEntity) {
+        mimeEntity->commonInit();
+        return mimeEntity;
+    }
 
 protected:
     Header m_header;
@@ -107,13 +116,12 @@ private:
     //MimeEntity& operator=(const MimeEntity&);
 };
 
-
-
 template<typename Iterator>
-MimeEntity::MimeEntity(Iterator bit, Iterator eit, int mask)
+std::shared_ptr<MimeEntity> MimeEntity::create(Iterator bit, Iterator eit, int mask)
 {
-    commonInit();
-    load(bit, eit, mask);
+    std::shared_ptr<MimeEntity> entity = MimeEntity::create();
+    entity->load(bit, eit, mask);
+    return entity;
 }
 
 
@@ -121,7 +129,7 @@ template<typename Iterator>
 void MimeEntity::load(Iterator bit, Iterator eit, int mask)
 {
     IteratorParser<Iterator, 
-        typename std::iterator_traits<Iterator>::iterator_category> prs(*this);
+        typename std::iterator_traits<Iterator>::iterator_category> prs(shared_from_this());
     prs.iMask(mask);
     prs.run(bit, eit);
 }

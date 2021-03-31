@@ -25,12 +25,12 @@ struct TEST_CLASS( parser_fixed_bugs )
         ifstream ifs("test3.msg");
         TEST_ASSERT_OR_RET(ifs.is_open(), "file open error");
 
-        MimeEntity me(ifs);
-        TEST_ASSERT(me.body().parts().size());
-        ContentType& ct = me.header().contentType();
+        std::shared_ptr<MimeEntity> me = MimeEntity::create(ifs);
+        TEST_ASSERT(me->body().parts().size());
+        ContentType& ct = me->header().contentType();
         TEST_ASSERT_EQUALS_P(ct.type(), "multipart");
         TEST_ASSERT_EQUALS_P(ct.subtype(), "form-data");
-        MimeEntityList& mel = me.body().parts();
+        MimeEntityList& mel = me->body().parts();
         MimeEntityList::iterator bit = mel.begin(), eit = mel.end();
         for( int i = 0; bit != eit; ++bit, ++i)
         {
@@ -44,12 +44,12 @@ struct TEST_CLASS( parser_fixed_bugs )
         using namespace std;
         File in("test3.msg");
         TEST_ASSERT_OR_RET(in, "file open error");
-        MimeEntity me(in.begin(), in.end());
-        TEST_ASSERT(me.body().parts().size());
-        ContentType& ct = me.header().contentType();
+        std::shared_ptr<MimeEntity> me = MimeEntity::create(in.begin(), in.end());
+        TEST_ASSERT(me->body().parts().size());
+        ContentType& ct = me->header().contentType();
         TEST_ASSERT_EQUALS_P(ct.type(), "multipart");
         TEST_ASSERT_EQUALS_P(ct.subtype(), "form-data");
-        MimeEntityList& mel = me.body().parts();
+        MimeEntityList& mel = me->body().parts();
         MimeEntityList::iterator bit = mel.begin(), eit = mel.end();
         for( int i = 0; bit != eit; ++bit, ++i)
         {

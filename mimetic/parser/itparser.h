@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <stack>
 #include <iostream>
+#include <memory>
 #include <mimetic/tree.h>
 #include <mimetic/utils.h>
 #include <mimetic/mimeentity.h>
@@ -28,10 +29,10 @@ template<typename Iterator>
 struct IteratorParser<Iterator, std::input_iterator_tag>
 {
 
-    IteratorParser(MimeEntity& me)
+    explicit IteratorParser(const std::shared_ptr<MimeEntity>& me)
     : m_me(me), m_iMask(imNone), m_lastBoundary(NoBoundary)
     {
-        m_entityStack.push(&m_me);
+        m_entityStack.push(m_me);
     }
     virtual ~IteratorParser()
     {
@@ -79,35 +80,35 @@ protected:
         etMultipart 
     };
     // vars
-    MimeEntity& m_me;
+    std::shared_ptr<MimeEntity> m_me;
     Iterator m_bit, m_eit;
     size_t m_iMask; // ignore mask
     BoundaryList m_boundaryList;
     BoundaryType m_lastBoundary;
-    std::stack<MimeEntity*> m_entityStack;
+    std::stack<std::shared_ptr<MimeEntity>> m_entityStack;
 
 protected:
     void appendPreambleBlock(const char* buf, int sz)
     {
-        MimeEntity* pMe = m_entityStack.top();
+        std::shared_ptr<MimeEntity> pMe = m_entityStack.top();
         pMe->body().preamble().append(buf,sz);
     }
     
     void appendEpilogueBlock(const char* buf, int sz)
     {
-        MimeEntity* pMe = m_entityStack.top();
+        std::shared_ptr<MimeEntity> pMe = m_entityStack.top();
         pMe->body().epilogue().append(buf,sz);
     }
     
     void appendBodyBlock(const char* buf, int sz)
     {
-        MimeEntity* pMe = m_entityStack.top();
+        std::shared_ptr<MimeEntity> pMe = m_entityStack.top();
         pMe->body().append(buf, sz);
     }
     
     std::string getBoundary()
     {
-        const MimeEntity* pMe = m_entityStack.top();
+        std::shared_ptr<MimeEntity> pMe = m_entityStack.top();
         const ContentType& ct = pMe->header().contentType();
         return std::string("--") + ct.param("boundary");
     }
@@ -119,15 +120,15 @@ protected:
     
     void pushNewChild()
     {
-        MimeEntity* pMe = m_entityStack.top();
-        MimeEntity* pChild = new MimeEntity;
+        std::shared_ptr<MimeEntity> pMe = m_entityStack.top();
+        std::shared_ptr<MimeEntity> pChild = MimeEntity::create();
         pMe->body().parts().push_back(pChild);
         m_entityStack.push(pChild);
     }
     
     EntityType getType()
     {
-        MimeEntity* pMe = m_entityStack.top();
+        std::shared_ptr<MimeEntity> pMe = m_entityStack.top();
         const Header& h = pMe->header();
         // will NOT be automatically created if it doesn't exists;
         // null ContentType will be returned
@@ -142,7 +143,7 @@ protected:
     
     void addField(const std::string& name, const std::string& value)
     {
-        MimeEntity* pMe = m_entityStack.top();
+        std::shared_ptr<MimeEntity> pMe = m_entityStack.top();
         Header& h = pMe->header();
         Header::iterator it = h.insert(h.end(), Field());
         it->name(name);
@@ -601,7 +602,7 @@ struct IteratorParser<Iterator, std::forward_iterator_tag>:
      * X& op++(int)
      */
     typedef IteratorParser<Iterator, std::input_iterator_tag> base_type;
-    IteratorParser(MimeEntity& me)
+    explicit IteratorParser(const std::shared_ptr<MimeEntity>& me)
     : base_type(me)
     {
     }
@@ -615,7 +616,7 @@ struct IteratorParser<Iterator, std::bidirectional_iterator_tag>:
     public IteratorParser<Iterator, std::forward_iterator_tag>
 {
     typedef IteratorParser<Iterator, std::forward_iterator_tag> base_type;
-    IteratorParser(MimeEntity& me)
+    explicit IteratorParser(const std::shared_ptr<MimeEntity>& me)
     : base_type(me)
     {
     }
@@ -629,7 +630,7 @@ struct IteratorParser<Iterator, std::random_access_iterator_tag>:
     public IteratorParser<Iterator, std::bidirectional_iterator_tag>
 {
     typedef IteratorParser<Iterator, std::bidirectional_iterator_tag> base_type;
-    IteratorParser(MimeEntity& me)
+    explicit IteratorParser(const std::shared_ptr<MimeEntity>& me)
     : base_type(me)
     {
     }
@@ -659,7 +660,7 @@ private:
         if(pe == peIgnore)
             return;
         Iterator eit = bit + size;
-        MimeEntity* pMe = m_entityStack.top();
+        std::shared_ptr<MimeEntity> pMe = m_entityStack.top();
         switch(pe)
         {
         case pePreamble:

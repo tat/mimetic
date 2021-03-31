@@ -210,10 +210,9 @@ int main(int argc, char** argv)
     if(argc == p)
     { // read from stdin
         istreambuf_iterator<char> bit(cin), eit;
-        MimeEntity me;
-        me.load(bit, eit, ignoreMask);
-        fqn = "stdin";    
-        printPart(me, mpr, fqn);
+        std::shared_ptr<MimeEntity> me = MimeEntity::create(bit, eit, ignoreMask);
+        fqn = "stdin";
+        printPart(*me, mpr, fqn);
     } else
         for(int fc = p; fc < argc; ++fc)
         {
@@ -225,9 +224,8 @@ int main(int argc, char** argv)
                      << endl;
                 continue;
             }
-            MimeEntity me;
-            me.load(in.begin(), in.end(), ignoreMask);
-            printPart(me, mpr, fqn);
+            std::shared_ptr<MimeEntity> me = MimeEntity::create(in.begin(), in.end(), ignoreMask);
+            printPart(*me, mpr, fqn);
         }
     return g_matches;
 }

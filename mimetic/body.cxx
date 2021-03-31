@@ -13,7 +13,7 @@ namespace mimetic
 using std::string;
 
 Body::Body()
-: m_owner(0)
+: m_owner()
 {
 }
 
@@ -22,19 +22,19 @@ void Body::set(const std::string& text)
     this->assign(text);
 }
 
-void Body::owner(MimeEntity* owner)
+void Body::owner(const std::shared_ptr<MimeEntity>& owner)
 {
     m_owner = owner;
 }
 
-MimeEntity* Body::owner()
+std::shared_ptr<MimeEntity> Body::owner()
 {
-    return m_owner;
+    return m_owner.lock();
 }
 
-const MimeEntity* Body::owner() const
+std::shared_ptr<const MimeEntity> Body::owner() const
 {
-    return m_owner;
+    return m_owner.lock();
 }
 
 bool Body::load(const string& fqn)

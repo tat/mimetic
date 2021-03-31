@@ -33,7 +33,7 @@ void printTabs(int c)
         cout << "    ";
 }
 
-void printMimeStructure(MimeEntity* pMe, int tabcount = 0)
+void printMimeStructure(const std::shared_ptr<MimeEntity>& pMe, int tabcount = 0)
 {
     ++g_entityCount;
     if(!g_quiet)
@@ -143,8 +143,8 @@ int main(int argc, char** argv)
     if(argc == fidx)
     {
         istreambuf_iterator<char> bit(std::cin), eit;
-        MimeEntity me(bit,eit, iMask);
-        printMimeStructure(&me);
+        std::shared_ptr<MimeEntity> me = MimeEntity::create(bit, eit, iMask);
+        printMimeStructure(me);
     } else {
         for(int fc = fidx; fc < argc; ++fc)
         {
@@ -156,8 +156,8 @@ int main(int argc, char** argv)
                     << endl;
                 continue;
             }
-            MimeEntity me(in.begin(), in.end(),iMask);
-            printMimeStructure(&me);
+            std::shared_ptr<MimeEntity> me = MimeEntity::create(in.begin(), in.end(), iMask);
+            printMimeStructure(me);
         }
     }
     return g_entityCount;

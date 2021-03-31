@@ -27,13 +27,18 @@ struct TextEntity: public MimeEntity
     /**
      *  Sets its content-type to "text/unknown"
      */
-    TextEntity();
-    TextEntity(const std::string& text);
+    static std::shared_ptr<TextEntity> create();
+    static std::shared_ptr<TextEntity> create(const std::string& text);
     /**
      *  Sets its content-type to "text/unknown",
      *  sets its body with the "text" variable and adds
      *  "charset=us-ascii" content-type parameter
      */
+    static std::shared_ptr<TextEntity> create(const std::string& text, const std::string& charset);
+
+protected:
+    TextEntity();
+    explicit TextEntity(const std::string& text);
     TextEntity(const std::string& text, const std::string& charset);
 };
 
@@ -44,11 +49,15 @@ struct TextEntity: public MimeEntity
  */
 struct TextPlain: public TextEntity
 {
-    TextPlain(const std::string& text);
+    static std::shared_ptr<TextPlain> create(const std::string& text);
     /**
      * constructs a TextPlain object, assigns <i>text</i> to its body and adds
      * a ContentType::Param("charset", <i>charset</i>) to ContentType parameter list
      */
+    static std::shared_ptr<TextPlain> create(const std::string& text, const std::string& charset);
+
+protected:
+    explicit TextPlain(const std::string& text);
     TextPlain(const std::string& text, const std::string& charset);
 };
 
@@ -56,11 +65,15 @@ struct TextPlain: public TextEntity
 /// text/enriched entity class
 struct TextEnriched: public TextEntity
 {
-    TextEnriched(const std::string& text);
+    static std::shared_ptr<TextEnriched> create(const std::string& text);
     /**
      * constructs a TextPlain object, assigns <i>text</i> to its body and adds
      * a ContentType::Param("charset", <i>charset</i>) to ContentType parameter list
      */
+    static std::shared_ptr<TextEnriched> create(const std::string& text, const std::string& charset);
+
+protected:
+    explicit TextEnriched(const std::string& text);
     TextEnriched(const std::string& text, const std::string& charset);
 };
 
@@ -71,30 +84,45 @@ struct TextEnriched: public TextEntity
  */
 struct MultipartEntity: public MimeEntity
 {
+    static std::shared_ptr<MultipartEntity> create();
+
+protected:
     MultipartEntity();
 };
 
 /// multipart/mixed entity class
 struct MultipartMixed: public MultipartEntity
 {
+    static std::shared_ptr<MultipartMixed> create();
+
+protected:
     MultipartMixed();
 };
 
 /// multipart/parallel entity class
 struct MultipartParallel: public MultipartEntity
 {
+    static std::shared_ptr<MultipartParallel> create();
+
+protected:
     MultipartParallel();
 };
 
 /// multipart/alternative entity class
 struct MultipartAlternative: public MultipartEntity
 {
+    static std::shared_ptr<MultipartAlternative> create();
+
+protected:
     MultipartAlternative();
 };
 
 /// multipart/digest entity class
 struct MultipartDigest: public MultipartEntity
 {
+    static std::shared_ptr<MultipartDigest> create();
+
+protected:
     MultipartDigest();
 };
 
@@ -102,16 +130,22 @@ struct MultipartDigest: public MultipartEntity
 /// application/octet-stream entity class
 struct ApplicationOctStream: public MimeEntity
 {
-    ApplicationOctStream();
+    static std::shared_ptr<ApplicationOctStream> create();
     template<typename Codec>
-    ApplicationOctStream(const std::string&, const Codec& c=Base64::Encoder());
+    static std::shared_ptr<ApplicationOctStream> create(const std::string&, const Codec& c=Base64::Encoder());
+
     std::string type() const;
     void type(const std::string&);
     uint padding() const;
     void padding(unsigned int);
     bool operator()() const { return isValid(); }
     bool isValid() const { return m_status; }
+
 protected:
+    ApplicationOctStream();
+    template<typename Codec>
+    ApplicationOctStream(const std::string&, const Codec& c);
+
     std::string m_fqn;
     bool m_status;
 };
@@ -122,14 +156,24 @@ struct Attachment: public MimeEntity
     /**
      * defaults to application/octet-stream
      */
-    Attachment(const std::string&);
-    Attachment(const std::string&, const ContentType&);
+    static std::shared_ptr<Attachment> create(const std::string&);
+    static std::shared_ptr<Attachment> create(const std::string&, const ContentType&);
     template<typename Codec>
-    Attachment(const std::string&, const Codec& c );
+    static std::shared_ptr<Attachment> create(const std::string&, const Codec& c );
     template<typename Codec>
-    Attachment(const std::string&, const ContentType&, const Codec& c);
+    static std::shared_ptr<Attachment> create(const std::string&, const ContentType&, const Codec& c);
+
     bool operator()() const { return isValid(); }
     bool isValid() const { return m_status; }
+
+protected:
+    explicit Attachment(const std::string&);
+    Attachment(const std::string&, const ContentType&);
+    template<typename Codec>
+    Attachment(const std::string&, const Codec& c);
+    template<typename Codec>
+    Attachment(const std::string&, const ContentType&, const Codec& c);
+
 private:
     template<typename Codec>
     void set(const std::string&, const ContentType&, const Codec& c);
@@ -140,7 +184,12 @@ private:
 /// image/jpeg attachment
 struct ImageJpeg: public Attachment
 {
-    ImageJpeg(const std::string& fqn)
+    static std::shared_ptr<ImageJpeg> create(const std::string& fqn);
+    template<typename Codec>
+    static std::shared_ptr<ImageJpeg> create(const std::string& fqn, const Codec& c);
+
+protected:
+    explicit ImageJpeg(const std::string& fqn)
     : Attachment(fqn, ContentType("image","jpeg"))
     {
     }
@@ -154,7 +203,12 @@ struct ImageJpeg: public Attachment
 /// audio/basic attachment
 struct AudioBasic: public Attachment
 {
-    AudioBasic(const std::string& fqn)
+    static std::shared_ptr<AudioBasic> create(const std::string& fqn);
+    template<typename Codec>
+    static std::shared_ptr<AudioBasic> create(const std::string& fqn, const Codec& c);
+
+protected:
+    explicit AudioBasic(const std::string& fqn)
     : Attachment(fqn, ContentType("audio","basic"))
     {
     }
@@ -170,11 +224,15 @@ struct AudioBasic: public Attachment
 /// message/rfc822 entity type
 struct MessageRfc822: public MimeEntity
 {
-    MessageRfc822(const MimeEntity&);
+    static std::shared_ptr<MessageRfc822> create(const std::shared_ptr<MimeEntity>&);
+
+protected:
+    explicit MessageRfc822(const std::shared_ptr<MimeEntity>&);
+
 protected:
     std::ostream& write(std::ostream&,const char*) const;
 private:
-    const MimeEntity& m_me;
+    std::shared_ptr<MimeEntity> m_me;
 };
 
 
@@ -192,6 +250,16 @@ template<typename Codec>
 Attachment::Attachment(const std::string& fqn, const ContentType& ctype, const Codec& codec)
 {
     set(fqn, ctype, codec);
+}
+
+template<typename Codec>
+std::shared_ptr<Attachment> Attachment::create(const std::string& fqn, const Codec& codec) {
+    return init(std::shared_ptr<Attachment>(new Attachment(fqn, codec)));
+}
+
+template<typename Codec>
+std::shared_ptr<Attachment> Attachment::create(const std::string& fqn, const ContentType& ctype, const Codec& codec) {
+    return init(std::shared_ptr<Attachment>(new Attachment(fqn, ctype, codec)));
 }
 
 template<typename Codec>
@@ -235,6 +303,24 @@ ApplicationOctStream::ApplicationOctStream(const std::string& fqn, const Codec& 
     h.contentDisposition().paramList().push_back(ContentDisposition::Param("filename", filename));
     
     m_status = body().load(m_fqn, codec);
+}
+
+template<typename Codec>
+std::shared_ptr<ApplicationOctStream> ApplicationOctStream::create(const std::string& fqn, const Codec& codec)
+{
+    return init(std::shared_ptr<ApplicationOctStream>(new ApplicationOctStream(fqn, codec)));
+}
+
+template<typename Codec>
+std::shared_ptr<ImageJpeg> ImageJpeg::create(const std::string& fqn, const Codec& codec)
+{
+    return init(std::shared_ptr<ImageJpeg>(new ImageJpeg(fqn, codec)));
+}
+
+template<typename Codec>
+std::shared_ptr<AudioBasic> AudioBasic::create(const std::string& fqn, const Codec& codec)
+{
+    return init(std::shared_ptr<AudioBasic>(new AudioBasic(fqn, codec)));
 }
 
 }

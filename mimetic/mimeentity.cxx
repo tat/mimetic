@@ -25,7 +25,7 @@ void MimeEntity::load(istream& is, int mask)
 {
     typedef istreambuf_iterator<char> it_type;
     typedef it_type::iterator_category it_cat;
-    IteratorParser<it_type, it_cat> prs(*this);
+    IteratorParser<it_type, it_cat> prs(shared_from_this());
     prs.iMask(mask);
     prs.run( it_type(is), it_type());
 }
@@ -62,7 +62,7 @@ ostream& MimeEntity::write(ostream& os, const char* eol) const
         for(; bit != eit; ++bit)
         {
             os << crlf << boundary << crlf;
-            MimeEntity* pMe = *bit;
+            std::shared_ptr<MimeEntity> pMe = *bit;
             os << *pMe;
         }
         // closing boundary
@@ -75,7 +75,7 @@ ostream& MimeEntity::write(ostream& os, const char* eol) const
         for(; bit != eit; ++bit)
         {
             os << crlf; 
-            MimeEntity* pMe = *bit;
+            std::shared_ptr<MimeEntity> pMe = *bit;
             os << *pMe;
         }
     } else {
@@ -94,30 +94,28 @@ ostream& operator<<(ostream& os, const MimeEntity& m)
 // called by all constructors()
 void MimeEntity::commonInit()
 {
-    m_body.owner(this);
+    m_body.owner(shared_from_this());
 }
-
 
 MimeEntity::MimeEntity()
 {
-    commonInit();
 }
 
-
-MimeEntity::MimeEntity(std::istream& is)
+std::shared_ptr<MimeEntity> MimeEntity::create()
 {
-    commonInit();
-    load(is);
+    return init(std::shared_ptr<MimeEntity>(new MimeEntity()));
+}
+
+std::shared_ptr<MimeEntity> MimeEntity::create(std::istream& is)
+{
+    std::shared_ptr<MimeEntity> entity = MimeEntity::create();
+    entity->load(is);
+    return entity;
 }
 
 MimeEntity::~MimeEntity()
 {
-    MimeEntityList::iterator bit = m_body.parts().begin(), 
-        eit = m_body.parts().end();
-    for(; bit != eit; ++bit)
-        if(*bit)
-            delete *bit;
-    m_body.clear();
+    // vtable anchor
 }
 
 Header& MimeEntity::header()

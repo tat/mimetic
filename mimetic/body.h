@@ -83,13 +83,13 @@ public:
     /**
       get body's MimeEntity owner
      */
-    MimeEntity* owner();
-    const MimeEntity* owner() const;
+    std::shared_ptr<MimeEntity> owner();
+    std::shared_ptr<const MimeEntity> owner() const;
     
 protected:
-    void owner(MimeEntity*);
+    void owner(const std::shared_ptr<MimeEntity>&);
 protected:
-    MimeEntity* m_owner;
+    std::weak_ptr<MimeEntity> m_owner;
     MimeEntityList m_parts;
     std::string m_preamble, m_epilogue;
 };

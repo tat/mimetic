@@ -8,6 +8,7 @@
 #define _MIMETIC_MIME_ENTITY_LIST_
 #include <list>
 #include <string>
+#include <memory>
 
 namespace mimetic
 {
@@ -15,7 +16,7 @@ namespace mimetic
 class MimeEntity;
 
 /// List of MimeEntity classes
-typedef std::list<MimeEntity*> MimeEntityList;
+typedef std::list<std::shared_ptr<MimeEntity>> MimeEntityList;
 
 
 }

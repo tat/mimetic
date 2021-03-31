@@ -24,6 +24,13 @@ Attachment::Attachment(const std::string& fqn, const ContentType& ct)
     set(fqn, ct, Base64::Encoder());
 }
 
+std::shared_ptr<Attachment> Attachment::create(const std::string& fqn) {
+    return init(std::shared_ptr<Attachment>(new Attachment(fqn)));
+}
+
+std::shared_ptr<Attachment> Attachment::create(const std::string& fqn, const ContentType& ct) {
+    return init(std::shared_ptr<Attachment>(new Attachment(fqn, ct)));
+}
 
 TextEntity::TextEntity()
 {
@@ -44,6 +51,18 @@ TextEntity::TextEntity(const string& text, const string& charset)
     m_body.assign(text);
 }
 
+std::shared_ptr<TextEntity> TextEntity::create() {
+    return init(std::shared_ptr<TextEntity>(new TextEntity()));
+}
+
+std::shared_ptr<TextEntity> TextEntity::create(const string& text) {
+    return init(std::shared_ptr<TextEntity>(new TextEntity(text)));
+}
+
+std::shared_ptr<TextEntity> TextEntity::create(const string& text, const string& charset) {
+    return init(std::shared_ptr<TextEntity>(new TextEntity(text, charset)));
+}
+
 TextPlain::TextPlain(const string& text)
 : TextEntity(text)
 {
@@ -56,6 +75,13 @@ TextPlain::TextPlain(const string& text, const string& charset)
     m_header.contentType("text/plain");
 }
 
+std::shared_ptr<TextPlain> TextPlain::create(const std::string& text) {
+    return init(std::shared_ptr<TextPlain>(new TextPlain(text)));
+}
+
+std::shared_ptr<TextPlain> TextPlain::create(const std::string& text, const string& charset) {
+    return init(std::shared_ptr<TextPlain>(new TextPlain(text, charset)));
+}
 
 TextEnriched::TextEnriched(const string& text)
 : TextEntity(text)
@@ -68,6 +94,13 @@ TextEnriched::TextEnriched(const string& text, const string& charset)
     m_header.contentType("text/enriched");
 }
 
+std::shared_ptr<TextEnriched> TextEnriched::create(const std::string& text) {
+    return init(std::shared_ptr<TextEnriched>(new TextEnriched(text)));
+}
+
+std::shared_ptr<TextEnriched> TextEnriched::create(const std::string& text, const string& charset) {
+    return init(std::shared_ptr<TextEnriched>(new TextEnriched(text, charset)));
+}
 
 MultipartEntity::MultipartEntity()
 {
@@ -75,6 +108,10 @@ MultipartEntity::MultipartEntity()
     ContentType ct("multipart", "unknown");
     ct.paramList().push_back(ContentType::Param("boundary", boundary));
     m_header.contentType(ct);
+}
+
+std::shared_ptr<MultipartEntity> MultipartEntity::create() {
+    return init(std::shared_ptr<MultipartEntity>(new MultipartEntity()));
 }
 
 MultipartMixed::MultipartMixed()
@@ -85,12 +122,20 @@ MultipartMixed::MultipartMixed()
     m_header.contentType(ct);
 }
 
+std::shared_ptr<MultipartMixed> MultipartMixed::create() {
+    return init(std::shared_ptr<MultipartMixed>(new MultipartMixed()));
+}
+
 MultipartParallel::MultipartParallel()
 {
     ContentType::Boundary boundary;
     ContentType ct("multipart", "parallel");
     ct.paramList().push_back(ContentType::Param("boundary", boundary));
     m_header.contentType(ct);
+}
+
+std::shared_ptr<MultipartParallel> MultipartParallel::create() {
+    return init(std::shared_ptr<MultipartParallel>(new MultipartParallel()));
 }
 
 MultipartAlternative::MultipartAlternative()
@@ -101,6 +146,10 @@ MultipartAlternative::MultipartAlternative()
     m_header.contentType(ct);
 }
 
+std::shared_ptr<MultipartAlternative> MultipartAlternative::create() {
+    return init(std::shared_ptr<MultipartAlternative>(new MultipartAlternative()));
+}
+
 MultipartDigest::MultipartDigest()
 {
     ContentType::Boundary boundary;
@@ -109,21 +158,36 @@ MultipartDigest::MultipartDigest()
     m_header.contentType(ct);
 }
 
+std::shared_ptr<MultipartDigest> MultipartDigest::create() {
+    return init(std::shared_ptr<MultipartDigest>(new MultipartDigest()));
+}
+
 ApplicationOctStream::ApplicationOctStream()
 {
     m_header.contentType("application/octet-stream");
 }
 
-MessageRfc822::MessageRfc822(const MimeEntity& me)
+std::shared_ptr<ApplicationOctStream> ApplicationOctStream::create() {
+    return init(std::shared_ptr<ApplicationOctStream>(new ApplicationOctStream()));
+}
+
+MessageRfc822::MessageRfc822(const std::shared_ptr<MimeEntity>& me)
 : m_me(me)
 {
     m_header.contentType("message/rfc822");
 }
 
+std::shared_ptr<MessageRfc822> MessageRfc822::create(const std::shared_ptr<MimeEntity>& me) {
+    return init(std::shared_ptr<MessageRfc822>(new MessageRfc822(me)));
+}
+
 ostream& MessageRfc822::write(ostream& os,const char* eol) const
 {
     MimeEntity::write(os);
-    return os << m_me;
+    if (m_me != nullptr) {
+        os << *m_me;
+    }
+    return os;
 }
 
 string ApplicationOctStream::type() const
@@ -150,5 +214,14 @@ void ApplicationOctStream::padding(unsigned int n)
     m_header.contentType(ct);
 }
 
+std::shared_ptr<ImageJpeg> ImageJpeg::create(const std::string& fqn)
+{
+    return init(std::shared_ptr<ImageJpeg>(new ImageJpeg(fqn)));
+}
+
+std::shared_ptr<AudioBasic> AudioBasic::create(const std::string& fqn)
+{
+    return init(std::shared_ptr<AudioBasic>(new AudioBasic(fqn)));
+}
 
 }

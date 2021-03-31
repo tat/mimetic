@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     istreambuf_iterator<char> ibeg(is), iend;
     ostreambuf_iterator<char> out(os);
     int iMask = (cl.is_set("ignore-child-parts") ? imChildParts: imNone);
-    MimeEntity me(ibeg, iend, iMask);
+    std::shared_ptr<MimeEntity> me = MimeEntity::create(ibeg, iend, iMask);
     if(!e.match(me))
         cerr << "not ";
     cerr << "matched" << endl;

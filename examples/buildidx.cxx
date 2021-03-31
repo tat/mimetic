@@ -44,8 +44,7 @@ void indexFile(MimeEntity& head, const string& fqn)
     File in(fqn);
     if(in)
     {
-        MimeEntity* pMe = new MimeEntity;
-        pMe->load(in.begin(), in.end(), ~imHeader);
+        std::shared_ptr<MimeEntity> pMe = MimeEntity::create(in.begin(), in.end(), ~imHeader);
         pMe->header().push_back(Field("X-Filename",fqn));
         head.body().parts().push_back(pMe);
         cerr << "." << flush;
@@ -105,17 +104,17 @@ int main(int argc, char** argv)
 
     if(argc > 1 && string(argv[1]) == "-h")
         usage();
-    MultipartMixed head;
+    std::shared_ptr<MultipartMixed> head = MultipartMixed::create();
     string fqn;
     if(argc == 1) { 
         // read filenames from stdin
         while(getline(cin, fqn))
-            indexItem(head, fqn);
+            indexItem(*head, fqn);
     } else {
         for(int fc = 1; fc < argc; ++fc)
-            indexItem(head, argv[fc]);
+            indexItem(*head, argv[fc]);
     }
-    cout << head << endl;
+    cout << *head << endl;
     cerr << "index of " << g_indexed << " file(s) built" << endl; 
     return g_indexed;
 }
