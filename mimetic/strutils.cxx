@@ -24,6 +24,10 @@ string canonical(const string& s, bool no_ws)
         idx++;
     if(idx)
         input.erase(0, idx);
+
+    if(input.empty())
+        return input;
+
     // removes trailing spaces
     idx = input.length() - 1;
     while(input[idx] == ' ')
