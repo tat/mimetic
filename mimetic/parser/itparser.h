@@ -718,8 +718,8 @@ private:
                 if(block_sz)
                 {
                     Iterator p = base + block_sz;
-                    char a = *--p, b = *--p;
-                    if(isnl(a,b))
+                    char a = *--p;
+                    if(block_sz>=2 && isnl(a,*--p))
                         block_sz -= 2;
                     else if(isnl(a))
                         block_sz--;
