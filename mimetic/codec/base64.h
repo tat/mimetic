@@ -191,7 +191,7 @@ public:
         for(; bit != eit; ++bit)
         {
             c = *bit; 
-            if(c > sDecTableSz || sDecTable[c] == -1)
+            if(c >= sDecTableSz || sDecTable[c] == -1)
                 continue; // malformed or newline
             m_ch[m_cidx++] = sDecTable[c]; 
             if(m_cidx < 4)
@@ -218,7 +218,7 @@ public:
     template<typename OutIt>
     void process(char_type c, OutIt& out)
     {
-        if(c > sDecTableSz || sDecTable[c] == -1)
+        if(c >= sDecTableSz || sDecTable[c] == -1)
             return; // malformed or newline
         m_ch[m_cidx++] = sDecTable[c];
         if(m_cidx < 4)
