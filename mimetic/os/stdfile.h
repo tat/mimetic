@@ -28,7 +28,7 @@ struct StdFile: public FileOp
     operator bool() const;
     void open(const std::string&, int mode = O_RDONLY);
     void close();
-    uint read(char*, int);
+    unsigned int read(char*, int);
 
     iterator begin();
     iterator end();

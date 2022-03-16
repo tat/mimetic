@@ -225,7 +225,7 @@ struct GenRunTest
             _( "    run_" << *beg << "();" );
         _( "    tearDown();" );
         _( "  }" );
-        _( "  uint count() { return " << m_fnList.size() << "; }" );
+        _( "  unsigned int count() { return " << m_fnList.size() << "; }" );
         _( "};" );
         _("static struct "<<cn<<"_add_to_list: public cutee::TestList");
         _( "{" );

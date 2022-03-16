@@ -12,8 +12,6 @@
 #include <iomanip>
 #include <stdarg.h>
 
-typedef unsigned int uint;
-
 #define CUTEE_VERSION "0.4.2"
 
 #define MAX_TEST_COUNT 1000
@@ -107,34 +105,34 @@ struct Context
     {}
     // class info
     const string& className() const    { return mClassName; }
-    uint classLineNo() const { return mClassLineNo; }
+    unsigned int classLineNo() const { return mClassLineNo; }
     const string& classFileName() const { return mClassFileName; }
     // filename
     const string& fileName() const { return mFileName; }
     // function info
     const string& functionName() const { return mFunctionName; }
-    uint functionLineNo() const { return mFunctionLineNo; }
+    unsigned int functionLineNo() const { return mFunctionLineNo; }
     // assertion info
     const string& expr() const { return mExpr; }
     const string& exprFileName() const { return mExprFileName; }
-    uint exprLineNo() const { return mExprLineNo; }
+    unsigned int exprLineNo() const { return mExprLineNo; }
 
     void className(const string& s) { mClassName = s; }
     void classFileName(const string& s) { mClassFileName = s; }
-    void classLineNo(uint i) { mClassLineNo = i; }
+    void classLineNo(unsigned int i) { mClassLineNo = i; }
 
     void filename(const string& s) { mFileName = s; }
 
     void functionName(const string& s) { mFunctionName = s; }
-    void functionLineNo(uint i) { mFunctionLineNo = i; }
+    void functionLineNo(unsigned int i) { mFunctionLineNo = i; }
 
     void expr(const string& s) { mExpr = s; }
     void exprFileName(const string& s) { mExprFileName = s; }
-    void exprLineNo(uint i) { mExprLineNo = i; }
+    void exprLineNo(unsigned int i) { mExprLineNo = i; }
 private:
     std::string mClassName, mClassFileName, mFunctionName, 
         mFileName, mExpr, mExprFileName;
-    uint mClassLineNo, mFunctionLineNo, mExprLineNo;
+    unsigned int mClassLineNo, mFunctionLineNo, mExprLineNo;
 };
 
 
@@ -183,7 +181,7 @@ struct CuteeTest: public cutee::Context
     void testRunMonitor(TestRunMonitor *evt) { mEvt = evt; }
     int passed() const  { return mFailed == 0; }
     virtual void run() = 0;
-    virtual uint count() = 0;
+    virtual unsigned int count() = 0;
 protected:
     void testAssert(int b)
     {
@@ -199,7 +197,7 @@ protected:
     }
 protected:
     TestRunMonitor *mEvt, mNullMonitor;
-    uint mFuncExitCode, mFailed;
+    unsigned int mFuncExitCode, mFailed;
 };
 
 
@@ -246,7 +244,7 @@ struct StatsMonitor: public TestRunMonitor
             mAssertFailed++;
     }
 protected:
-    uint mAssertPassed, mAssertFailed, mAssertCount, mFuncPassed,
+    unsigned int mAssertPassed, mAssertFailed, mAssertCount, mFuncPassed,
          mFuncFailed, mFuncCount, mClassPassed, mClassFailed, mClassCount;
 };
 

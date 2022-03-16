@@ -70,7 +70,7 @@ StdFile::iterator StdFile::end()
     return iterator();
 }
 
-uint StdFile::read(char* buf, int bufsz)
+unsigned int StdFile::read(char* buf, int bufsz)
 {
     int r;
     do
