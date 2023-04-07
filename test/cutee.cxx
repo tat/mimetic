@@ -400,7 +400,7 @@ struct GenAutomakefile
         of << endl;
 
         _( "" );
-        _( "%.cutee.cxx: $(srcdir)/%.h" );
+        _( "%.cutee.cxx: $(srcdir)/%.h cutee" );
         _( "\t$(CUTEE) -o $@ $<");
 
         _( "" );
