@@ -33,9 +33,10 @@ namespace mimetic
 class Rfc822Header: public std::deque<Field>
 {
 public:
-    struct find_by_name: 
-        public std::unary_function<const Field, bool>
+    struct find_by_name
     {
+        typedef const Field argument_type;
+        typedef bool result_type;
         find_by_name(const std::string&);
         bool operator()(const Field&) const;
     private:
