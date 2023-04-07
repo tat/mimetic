@@ -36,7 +36,7 @@ public:
 class Encoder: public buffered_codec, public chainable_codec<Encoder>
 {
     enum { pad_idx = 64 };
-    char_type m_ch[3];
+    char_type m_ch[3] = { 0 };
     int m_cidx;
     int m_pos, m_maxlen;
 
