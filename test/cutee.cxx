@@ -343,11 +343,11 @@ struct GenMakefile
 
         _( "" );
         _( RUNTEST_NAME ".cxx: cutee" );
-        _( "\t$(CUTEE) -m -o "RUNTEST_NAME".cxx" );
+        _( "\t$(CUTEE) -m -o " RUNTEST_NAME ".cxx" );
         _( "" );
-        _( RUNTEST_NAME": autocutee.mk " RUNTEST_NAME ".o $(object_files)");
-        _( "\t$(CXX) $(CXXFLAGS) $(LDFLAGS) -o "RUNTEST_NAME" "RUNTEST_NAME".o $(object_files)");
-        _( "\t./"RUNTEST_NAME );
+        _( RUNTEST_NAME ": autocutee.mk " RUNTEST_NAME ".o $(object_files)");
+        _( "\t$(CXX) $(CXXFLAGS) $(LDFLAGS) -o " RUNTEST_NAME " " RUNTEST_NAME ".o $(object_files)");
+        _( "\t./" RUNTEST_NAME );
         _( "" );
         _( "# cutee autogen: end ");
     }
@@ -410,13 +410,13 @@ struct GenAutomakefile
 
         _( "" );
         _( RUNTEST_NAME "-clean:");
-        _( "\trm -f autocutee.mk cutee *.o *.cutee.cxx "RUNTEST_NAME" "RUNTEST_NAME".cxx");
+        _( "\trm -f autocutee.mk cutee *.o *.cutee.cxx " RUNTEST_NAME " " RUNTEST_NAME ".cxx");
         _( "\ttouch autocutee.mk");
 
         _( "" );
-        _( "EXTRA_PROGRAMS="RUNTEST_NAME );
-        _( RUNTEST_NAME "_SOURCES="RUNTEST_NAME".cxx $(test_files) $(t_runners)");
-        _( RUNTEST_NAME"_DEPENDENCIES=cutee autocutee.mk" );
+        _( "EXTRA_PROGRAMS=" RUNTEST_NAME );
+        _( RUNTEST_NAME "_SOURCES=" RUNTEST_NAME ".cxx $(test_files) $(t_runners)");
+        _( RUNTEST_NAME "_DEPENDENCIES=cutee autocutee.mk" );
         _( "# cutee autogen: end ");
     }
 private:
