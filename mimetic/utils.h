@@ -48,6 +48,7 @@ template<typename Iterator>
 Iterator find_bm(Iterator bit, Iterator eit, const std::string& word, const std::random_access_iterator_tag&)
 {
     int bLen = word.length();
+    int sourceLen = std::distance(bit, eit);
     const char* pWord = word.c_str();
     int i, t, shift[256];
     unsigned char c;
@@ -56,17 +57,17 @@ Iterator find_bm(Iterator bit, Iterator eit, const std::string& word, const std:
         shift[i] = bLen;
 
     for(i = 0; i < bLen; ++i)
-        shift[ (unsigned char) pWord[i] ] = bLen -i - 1;
+        shift[ static_cast<unsigned char>( pWord[i] ) ] = bLen -i - 1;
 
     for(i = t = bLen-1; t >= 0; --i, --t)
     {
-        if((bit + i) >= eit)
+        if (i >= sourceLen)
             return eit; 
 
         while((c = *(bit + i)) != pWord[t]) 
         {
             i += std::max(bLen-t, shift[c]);
-            if((bit + i) >= eit) return eit; 
+            if (i >= sourceLen) return eit; 
             t = bLen-1;
         }
     }
