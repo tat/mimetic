@@ -6,6 +6,7 @@
  ***************************************************************************/
 #ifndef _MIMETIC_UTILS_H_
 #define _MIMETIC_UTILS_H_
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <ctype.h>
@@ -43,37 +44,6 @@ int str2int(const std::string& s);
 /// returns a string hexadecimal representation of \p n
 std::string int2hex(unsigned int n);
 
-// find_bm specialization for random access iterators
-template<typename Iterator>
-Iterator find_bm(Iterator bit, Iterator eit, const std::string& word, const std::random_access_iterator_tag&)
-{
-    int bLen = word.length();
-    const char* pWord = word.c_str();
-    int i, t, shift[256];
-    unsigned char c;
-
-    for(i = 0; i < 256; ++i)  
-        shift[i] = bLen;
-
-    for(i = 0; i < bLen; ++i)
-        shift[ (unsigned char) pWord[i] ] = bLen -i - 1;
-
-    for(i = t = bLen-1; t >= 0; --i, --t)
-    {
-        if((bit + i) >= eit)
-            return eit; 
-
-        while((c = *(bit + i)) != pWord[t]) 
-        {
-            i += std::max(bLen-t, shift[c]);
-            if((bit + i) >= eit) return eit; 
-            t = bLen-1;
-        }
-    }
-
-    return bit + i + 1;
-}
-
 // boyer-moore find 
 /**
  * find the first occurrence of \p word in (\p bit, \p eit]
@@ -84,11 +54,8 @@ Iterator find_bm(Iterator bit, Iterator eit, const std::string& word, const std:
 template<typename Iterator>
 Iterator find_bm(Iterator bit, Iterator eit, const std::string& word)
 {
-    return find_bm(bit, eit, word, 
-        typename std::iterator_traits<Iterator>::iterator_category());
+    return std::search(bit, eit, word.begin(), word.end());
 }
-
-
 
 } // ns utils
 
