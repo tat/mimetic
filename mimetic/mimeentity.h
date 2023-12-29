@@ -55,8 +55,10 @@ public:
      */
     MimeEntity(std::istream&);
 
+#if __cplusplus >= 201103L
     MimeEntity(const MimeEntity&) = delete;
     MimeEntity& operator=(const MimeEntity&) = delete;
+#endif
 
     virtual ~MimeEntity();
 
@@ -106,8 +108,10 @@ protected:
     size_type m_size;
 
 private:
-    //MimeEntity(const MimeEntity&);
-    //MimeEntity& operator=(const MimeEntity&);
+#if __cplusplus < 201103L
+    MimeEntity(const MimeEntity&);
+    MimeEntity& operator=(const MimeEntity&);
+#endif
 };
 
 
