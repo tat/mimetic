@@ -9,6 +9,7 @@
 #include <mimetic/circular_buffer.h>
 #include <mimetic/codec/codec_base.h>
 #include <mimetic/codec/codec_chain.h>
+#include <cstring>
 
 namespace mimetic
 {
@@ -85,6 +86,7 @@ public:
     Encoder(int maxlen = default_maxlen)
     : m_cidx(0), m_pos(1), m_maxlen(maxlen)
     {
+	memset(&m_ch, 0, sizeof(m_ch));
     }
     /*! Returns the name of the codec ("Base64") */
     const char* name() const { return "Base64"; }

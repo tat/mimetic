@@ -113,7 +113,7 @@ string int2hex(unsigned int n)
             if(zeros)
                 r.insert((string::size_type)0, zeros, '0');
             zeros = 0;
-            r.insert((string::size_type)0, 1, tb[cp]);
+            r.insert((string::size_type)0, 1, tb[static_cast<unsigned>(cp)]);
         }
     }
     return r;

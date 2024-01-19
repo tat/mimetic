@@ -137,7 +137,6 @@ void testRfc822::testMailbox()
 void testRfc822::testAddress()
 {
     Address a("e@mail.com"), b;
-    int i;
     TEST_ASSERT(!a.isGroup());
 
     b.set("e@mail.com");

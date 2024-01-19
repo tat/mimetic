@@ -13,8 +13,14 @@ namespace mimetic
 {
 struct StdFile;
 
-struct ifile_iterator: public std::iterator<std::input_iterator_tag, char>
+struct ifile_iterator
 {
+    typedef std::input_iterator_tag iterator_category;
+    typedef char value_type;
+    typedef std::ptrdiff_t  difference_type;
+    typedef char* pointer;
+    typedef char& reference;
+
     ifile_iterator();    
     ifile_iterator(StdFile* f);
     ifile_iterator(const ifile_iterator&);

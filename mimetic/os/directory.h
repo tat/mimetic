@@ -23,8 +23,14 @@ public:
         Type type;
     };
     friend class iterator;
-    struct iterator: public std::iterator<std::forward_iterator_tag, DirEntry>
+    struct iterator
     {
+        typedef std::forward_iterator_tag iterator_category;
+        typedef DirEntry value_type;
+        typedef std::ptrdiff_t  difference_type;
+        typedef DirEntry* pointer;
+        typedef DirEntry& reference;
+
         iterator() // end() it
         : m_dirp(0), m_dirh(0), m_eoi(true)
         {

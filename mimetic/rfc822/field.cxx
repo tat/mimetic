@@ -154,7 +154,8 @@ ostream& Field::write(ostream& os, unsigned int fold) const
     // override to customize
     if(fold)
     {
-        int i, sp;
+        int sp;
+        size_t i;
         string ostr = name() + ": " + value();
 
         // skip the "fieldname: " part just on the first inner iteration 

@@ -177,7 +177,7 @@ public:
         tb[QP::CR] = tb[QP::LF] = QP::newline;
         const char* unsafe = "!\"#$@[]\\^`{}|~";
         while(*unsafe != 0)
-            tb[*unsafe++] = QP::unsafe;
+            tb[static_cast<unsigned>(*unsafe++)] = QP::unsafe;
         for(int i = 0; i < 256; i++)
         {
             TEST_ASSERT(tb[i] == QP::sTb[i]);
