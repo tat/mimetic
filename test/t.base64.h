@@ -12,6 +12,7 @@ namespace mimetic
 class TEST_CLASS( test_base64 )
 {
     static const char* test[][2];
+    static const char* test_invalid_input[][2];
 public:
     void TEST_FUNCTION( testEncode )
     {
@@ -50,6 +51,17 @@ public:
         {
             std::string src = test[i][1];
             std::string exp = test[i][0];
+            std::string got;
+            Base64::Decoder base64;
+            decode(src.begin(), src.end(),base64,std::back_inserter<std::string>(got));
+            TEST_ASSERT_EQUALS_P( exp, got);
+            i++;
+        }
+        i = 0;
+        while(test_invalid_input[i][1] != 0)
+        {
+            std::string src = test_invalid_input[i][1];
+            std::string exp = test_invalid_input[i][0];
             std::string got;
             Base64::Decoder base64;
             decode(src.begin(), src.end(),base64,std::back_inserter<std::string>(got));

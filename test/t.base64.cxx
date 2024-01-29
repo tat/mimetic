@@ -35,3 +35,17 @@ const char* test_base64::test[][2] = {
 { "abcde\1fghi\2lmno\3pqr\4stu\5vz","YWJjZGUBZmdoaQJsbW5vA3BxcgRzdHUFdno="    },
 { 0, 0 }
 };
+
+/*
+ * only test decoder, invalid chars should be skipped
+ *
+ * test fields:
+ * expected decoded data        base64 encoded data including invalid chars (e.g. whitespace)
+ *
+ */
+const char* test_base64::test_invalid_input[][2] = {
+{ "abcdefghilmnopqrstuvz","Y WJ#jZGVm:Z2h&pb;G1ub3-Bxcn\nN0d$XZ6"    },
+// | is 124 (dec) which is exactly the size of Base64::sDecTableSz
+{ "abcdefghilmnopqrstuvz","YWJjZGVmZ2|hpbG1ub3BxcnN0dXZ6"    },
+{ 0, 0 }
+};
