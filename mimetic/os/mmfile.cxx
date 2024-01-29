@@ -97,7 +97,7 @@ MMFile::const_iterator MMFile::end() const
     return m_end;
 }
 
-uint MMFile::read(char* buf, int bufsz)
+unsigned int MMFile::read(char* buf, int bufsz)
 {
     int r;
     do

@@ -34,7 +34,7 @@ ContentType::Boundary::Boundary()
         stringstream ss;
         srand(time(0));
         short tbSize = sizeof(tb)-1;
-        for(uint i=0; i < 48; ++i)
+        for(unsigned int i=0; i < 48; ++i)
         {
             unsigned int r = rand();
             ss << tb[r % tbSize];

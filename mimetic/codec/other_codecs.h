@@ -117,7 +117,7 @@ struct MaxLineLen: public unbuffered_codec, public chainable_codec<MaxLineLen>
     : m_max(0), m_written(0)
     {
     }
-    MaxLineLen(uint m)
+    MaxLineLen(unsigned int m)
     : m_max(m), m_written(0)
     {
     }
