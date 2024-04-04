@@ -654,7 +654,7 @@ private:
     using base_type::isnl;
     
     typedef TreeNode<char> BoundaryTree;
-    inline void onBlock(Iterator bit, int size, ParsingElem pe)
+    inline void onBlock(Iterator bit, size_t size, ParsingElem pe)
     {
         if(pe == peIgnore)
             return;
