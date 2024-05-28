@@ -51,7 +51,7 @@ bool FileOp::exists(const string& fqn)
 }
 
 //static
-uint FileOp::size(const string& fqn)
+unsigned int FileOp::size(const string& fqn)
 {
     struct stat st;
     if(::stat(fqn.c_str(), &st) == 0)
@@ -61,7 +61,7 @@ uint FileOp::size(const string& fqn)
 }
 
 //static
-uint FileOp::ctime(const string& fqn)
+unsigned int FileOp::ctime(const string& fqn)
 {
     struct stat st;
     if(::stat(fqn.c_str(), &st) == 0)
@@ -71,7 +71,7 @@ uint FileOp::ctime(const string& fqn)
 }
 
 //static
-uint FileOp::atime(const string& fqn)
+unsigned int FileOp::atime(const string& fqn)
 {
     struct stat st;
     if(::stat(fqn.c_str(), &st) == 0)
@@ -81,7 +81,7 @@ uint FileOp::atime(const string& fqn)
 }
 
 //static
-uint FileOp::mtime(const string& fqn)
+unsigned int FileOp::mtime(const string& fqn)
 {
     struct stat st;
     if(::stat(fqn.c_str(), &st) == 0)
