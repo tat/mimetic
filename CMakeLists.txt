@@ -74,6 +74,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_config.h.in
 # Define shared library
 if(BUILD_SHARED_LIBS)
     add_library(mimetic SHARED ${MIMETIC_SOURCES})
+    add_library(mimetic::mimetic ALIAS mimetic)
     target_compile_definitions(mimetic PUBLIC HAVE_MIMETIC_CONFIG)
     target_include_directories(mimetic
         PUBLIC
@@ -93,6 +94,7 @@ endif()
 # Define static library
 if(BUILD_STATIC_LIBS)
     add_library(mimetic_static STATIC ${MIMETIC_SOURCES})
+    add_library(mimetic::mimetic_static ALIAS mimetic_static)
     target_compile_definitions(mimetic_static PUBLIC HAVE_MIMETIC_CONFIG)
     target_include_directories(mimetic_static
     PUBLIC
