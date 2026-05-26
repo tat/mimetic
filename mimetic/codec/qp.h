@@ -397,7 +397,7 @@ class Decoder: public buffered_codec, public chainable_codec<Encoder>
 public:
     /*! Constructor */
     Decoder()
-    : m_state(sWaitingChar), m_nl(0)
+    : m_maxlen(0), m_state(sWaitingChar), m_nl(0), m_prev()
     {
     }
     /*! Returns the name of the codec ("Quoted-Printable") */
