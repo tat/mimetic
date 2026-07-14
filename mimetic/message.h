@@ -107,7 +107,7 @@ struct ApplicationOctStream: public MimeEntity
     ApplicationOctStream(const std::string&, const Codec& c=Base64::Encoder());
     std::string type() const;
     void type(const std::string&);
-    uint padding() const;
+    unsigned int padding() const;
     void padding(unsigned int);
     bool operator()() const { return isValid(); }
     bool isValid() const { return m_status; }

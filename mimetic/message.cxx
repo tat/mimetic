@@ -138,7 +138,7 @@ void ApplicationOctStream::type(const string& type)
     m_header.contentType(ct);
 }
 
-uint ApplicationOctStream::padding() const
+unsigned int ApplicationOctStream::padding() const
 {
     return utils::str2int(m_header.contentType().param("padding"));
 }

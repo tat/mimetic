@@ -28,7 +28,7 @@ struct MMFile: public FileOp
     operator bool() const;
     bool open(const std::string&, int mode = O_RDONLY);
     void close();
-    uint read(char*, int);
+    unsigned int read(char*, int);
 
     iterator begin();
     const_iterator begin() const;

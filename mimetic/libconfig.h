@@ -15,7 +15,6 @@
 
 /* Mac OS X */
 #if defined(__APPLE__) && defined(__MACH__)
-typedef unsigned int uint;
 #ifdef HAVE_MIMETIC_CONFIG
 #include "config.h"
 #endif
@@ -29,7 +28,6 @@ typedef unsigned int uint;
 #include <io.h>
 #include <ctime>
 #include <cstdio>
-typedef unsigned int uint;
 #define CONFIG_WIN32
 #endif
 
