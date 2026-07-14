@@ -1,0 +1,4 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/mimeticTargets.cmake")
+set(MIMETIC_INCLUDE_DIRS "${PACKAGE_PREFIX_DIR}/include")

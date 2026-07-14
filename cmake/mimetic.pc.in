@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+includedir=@CMAKE_INSTALL_PREFIX@/include
+
+Name: mimetic
+Description: mimetic is a free, MIT licensed, Email library (MIME) written in C++ designed to be easy to use and integrate but yet fast and efficient. (https://github.com/tat/mimetic)
+Version: @PKGCONF_VERSION@
+Libs: -L${libdir} -lmimetic
+Cflags: -I${includedir}
+
